@@ -5,31 +5,28 @@
 using std::endl;
 using std::cout;
 using std::string;
+using std::to_string;
 
 
 class Person
 {
     private:
-        string infectionStatus, name;
+        string infectionStatus;
         int step, daysRemain;
     public:
         Person()
         {
             infectionStatus = "susceptible";
-            name = "Joe";
-            step = 0;
-        }
-
-        Person(string givenName)
-        {
-            infectionStatus = "susceptible";
-            name = givenName;
             step = 0;
         }
         
         string status_string()
         {
-            return infectionStatus;
+            if (infectionStatus=="sick")
+            {
+                return infectionStatus + " (" + to_string(daysRemain) + " days remaining)";
+            }
+            else {return infectionStatus;}
         }
 
         void update()
@@ -55,19 +52,23 @@ class Person
             }
         }
 
-        void is_stable()
+        bool is_stable()
         {
-            infectionStatus = "recovered";
-        }
-
-        string getName()
-        {
-            return name;
+            if (infectionStatus=="recovered" || infectionStatus=="inoculated")
+            {
+                return true;
+            }
+            else {return false;}
         }
 
         int getDay()
         {
             return step;
+        }
+
+        string get_status()
+        {
+            return infectionStatus;
         }
 };
 
@@ -75,23 +76,22 @@ class Person
 int infectionReport(Person joe)
 {
     srand(time(NULL));
-    while (joe.status_string() != "recovered")
+    while (joe.is_stable()!=true)
     {
         joe.update();
         
-        
         float bad_luck;
         bad_luck = (float)(rand()) / (float)(RAND_MAX);
+        if (joe.get_status() == "sick")
+        {
+            joe.infection_progression();
+        }
         if (bad_luck>0.95)
         {
             joe.infect(5);
         }
-        if (joe.status_string() == "sick")
-        {
-            joe.infection_progression();
-        }
 
-        cout << "On day " << joe.getDay() << ", " << joe.getName() << " is " << joe.status_string() << ". (" << bad_luck << ")" << endl;
+        cout << "On day " << joe.getDay() << ", Joe is " << joe.status_string() << "." << endl;
     }
     return 0;
 }
