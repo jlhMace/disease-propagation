@@ -12,26 +12,26 @@ class Person
 {
     private:
         string infectionStatus;
-        int step, daysRemain;
+        int countDaysTotal, countDaysRemain;
     public:
         Person()
         {
             infectionStatus = "susceptible";
-            step = 0;
+            countDaysTotal = 0;
         }
         
-        string status_string()
+        string getStatusString()
         {
             if (infectionStatus=="sick")
             {
-                return infectionStatus + " (" + to_string(daysRemain) + " days remaining)";
+                return infectionStatus + " (" + to_string(countDaysRemain) + " days remaining)";
             }
             else {return infectionStatus;}
         }
 
         void update()
         {
-            step++;
+            countDaysTotal++;
         }
 
         void infect(int n)
@@ -39,14 +39,14 @@ class Person
             if (infectionStatus == "susceptible")
             {
                 infectionStatus = "sick";
-                daysRemain = n;
+                countDaysRemain = n;
             }
         }
 
-        void infection_progression()
+        void progressInfection()
         {
-            daysRemain--;
-            if (daysRemain==0)
+            countDaysRemain--;
+            if (countDaysRemain==0)
             {
                 infectionStatus = "recovered";
             }
@@ -63,10 +63,10 @@ class Person
 
         int getDay()
         {
-            return step;
+            return countDaysTotal;
         }
 
-        string get_status()
+        string getStatus()
         {
             return infectionStatus;
         }
@@ -82,16 +82,16 @@ int infectionReport(Person joe)
         
         float bad_luck;
         bad_luck = (float)(rand()) / (float)(RAND_MAX);
-        if (joe.get_status() == "sick")
+        if (joe.getStatus() == "sick")
         {
-            joe.infection_progression();
+            joe.progressInfection();
         }
         if (bad_luck>0.95)
         {
             joe.infect(5);
         }
 
-        cout << "On day " << joe.getDay() << ", Joe is " << joe.status_string() << "." << endl;
+        cout << "On day " << joe.getDay() << ", Joe is " << joe.getStatusString() << "." << endl;
     }
     return 0;
 }
