@@ -9,16 +9,22 @@ using std::string;
 
 class Person
 {
-    // Represents an individual
     private:
         string infectionStatus, name;
-        int daysRemain;
+        int step, daysRemain;
     public:
         Person()
         {
-            infectionStatus = 'susceptible';
-            name = 'Joe';
-            daysRemain = 0;
+            infectionStatus = "susceptible";
+            name = "Joe";
+            step = 0;
+        }
+
+        Person(string givenName)
+        {
+            infectionStatus = "susceptible";
+            name = givenName;
+            step = 0;
         }
         
         string status_string()
@@ -26,20 +32,32 @@ class Person
             return infectionStatus;
         }
 
-        int update()
+        void update()
         {
-            daysRemain = daysRemain - 1;
+            step++;
         }
 
-        int infect(int n)
+        void infect(int n)
         {
-            daysRemain = 5;
-            infectionStatus = 'sick';
+            if (infectionStatus == "susceptible")
+            {
+                infectionStatus = "sick";
+                daysRemain = n;
+            }
+        }
+
+        void infection_progression()
+        {
+            daysRemain--;
+            if (daysRemain==0)
+            {
+                infectionStatus = "recovered";
+            }
         }
 
         void is_stable()
         {
-            
+            infectionStatus = "recovered";
         }
 
         string getName()
@@ -49,22 +67,32 @@ class Person
 
         int getDay()
         {
-            return daysRemain;
+            return step;
         }
-
 };
 
 
-int dailyReport(Person joe)
+int infectionReport(Person joe)
 {
-    float bad_luck;
-    bad_luck = (float)(rand()) / (float)(RAND_MAX);
-    if (bad_luck>0.95)
+    srand(time(NULL));
+    while (joe.status_string() != "recovered")
     {
-        joe.infect(5);
-    }
+        joe.update();
+        
+        
+        float bad_luck;
+        bad_luck = (float)(rand()) / (float)(RAND_MAX);
+        if (bad_luck>0.95)
+        {
+            joe.infect(5);
+        }
+        if (joe.status_string() == "sick")
+        {
+            joe.infection_progression();
+        }
 
-    cout << " " << endl;
+        cout << "On day " << joe.getDay() << ", " << joe.getName() << " is " << joe.status_string() << ". (" << bad_luck << ")" << endl;
+    }
     return 0;
 }
 
@@ -73,8 +101,7 @@ int main()
 {
     Person joe;
 
-    dailyReport(joe);
-    // cout << "On day " << joe.getDay() << ", " << joe.getName() << " is " << joe.status_string() << "." << endl;
-
+    infectionReport(joe);
+    
     return 0;
 }
